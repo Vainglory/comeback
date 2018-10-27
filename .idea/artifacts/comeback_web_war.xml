@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="comeback-web:war">
+    <output-path>$PROJECT_DIR$/comeback-web/target</output-path>
+    <root id="archive" name="comeback-web-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="comeback-web:war exploded" />
+    </root>
+  </artifact>
+</component>

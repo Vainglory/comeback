@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+    <meta charset="UTF-8">
+    <title>Vainglory</title>
+    <head>
+        <!-- 加载easyUi -->
+        <script type="text/javascript" src="/easyui/jquery.min.js"></script>
+        <script type="text/javascript" src="/easyui/jquery.easyui.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="/easyui/themes/icon.css">
+        <link rel="stylesheet" type="text/css" href="/easyui/themes/metro/easyui.css">
+
+        <script type="text/javascript" src="/easyui/datagrid-detailview.js"></script>
+        <link rel="stylesheet" type="text/css" href="/easyui/webuploader/webuploader.css">
+        <script type="text/javascript" src="/easyui/webuploader/webuploader.js"></script>
+
+
+    </head>
+    <body class="easyui-layout">
+
+    <div id="tt" class="easyui-tabs" style="height: 800px">
+        <div title="首页" style="padding:80px;display:none;">
+
+            <!--rownumbers: true,    title="Folder Browser"-->
+
+        </div>
+        <div title="组织机构" data-options="closable:true" style="overflow:auto;padding:80px;display:none;">
+
+            <table id="tt2" class="easyui-treegrid" align="center"
+                   data-options="
+                    url: '/organizationWeb/getJson',
+                    method: 'get',
+                    idField: 'id',
+                    treeField: 'name'
+                ">
+                <thead>
+
+                    <div style="margin-bottom: 5px" id="tb">
+                        <a href="javascript:addOrganization()" class="easyui-linkbutton"
+                           data-options="iconCls:'icon-add',plain:true">添加</a>
+                        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">编辑</a>
+                        <a href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a>
+                    </div>
+                        <tr>
+                            <th data-options="field:'id',width:25"></th>
+                            <th data-options="field:'name',width:120">机构名称</th>
+                            <th data-options="field:'type',width:100">机构类型</th>
+                            <th data-options="field:'code',width:100">机构编码</th>
+                            <th data-options="field:'principalId',width:100">负责人</th>
+                            <th data-options="field:'path',width:100">业务覆盖区域</th>
+                            <th data-options="field:'address',width:100">地址</th>
+                            <th data-options="field:'phone',width:100">电话号码</th>
+                            <th data-options="field:'postCode',width:100">邮政编码</th>
+                            <th data-options="field:'fax',width:100">传真号</th>
+                            <th data-options="field:'createTime',width:120">创建时间</th>
+                            <th data-options="field:'modifyTime',width:120">修改时间</th>
+                        </tr>
+                </thead>
+            </table>
+            <table id="tt3" style="width:600px;height:400px"></table>
+        </div>
+    </div>
+    <div id="dlg" class="easyui-dialog" title="新的机构" style="width:600px;height:500px;"
+         closed="true" data-options="iconCls:'icon-save',resizable:true,modal:true" buttons="#bb">
+        <form id="attrForm">
+            <br/>
+            &nbsp;&nbsp;<label>上级机构</label><!--下拉框-->
+            <select name = "select" id="select1">
+            </select>
+            <br/><br/>
+            &nbsp;&nbsp;<label>机构类型</label>
+            <select name = "select" id="select2">
+            </select>
+            <br/><br/>
+            &nbsp;&nbsp;<label>负责人</label>
+            <select name = "select" id="select3">
+            </select>
+            <br/><br/>
+            &nbsp;&nbsp;<label>机构名称</label>
+            <input  id="name" name="skuName" class="easyui-textbox" data-options="" style="width:300px;"/>
+            <br/><br/>
+            &nbsp;&nbsp;<label>地址</label>
+            <input  id="address" name="text" class="easyui-textbox" data-options="" style="width:300px;"/>
+            <br/><br/>
+            &nbsp;&nbsp;<label>电话号码</label>
+            <input  id="phone" name="text" class="easyui-textbox" data-options="" style="width:300px;"/>
+            <br/><br/>
+            &nbsp;&nbsp;<label>邮政编码</label>
+            <input  id="postCode" name="text" class="easyui-textbox" data-options="" style="width:300px;"/>
+            <br/><br/>
+            &nbsp;&nbsp;<label>传真号</label>
+            <input  id="fax" name="text" class="easyui-textbox" data-options="" style="width:300px;"/>
+            <br/><br/>
+            &nbsp;&nbsp;<label>排序</label><!--这个麻烦了-->
+            <input  id="orderNo" name="text" class="easyui-textbox" data-options="" style="width:300px;"/>
+
+            <br><br><br><br>
+            <div id="fromBtn" align="center">
+                <input type="button" href="#" class="easyui-linkbutton" onclick="saveOrganization()"value="保 存">
+                &nbsp;&nbsp;
+                <input type="button" href="#" class="easyui-linkbutton" onclick="close()"value="关 闭">
+            </div>
+
+        </form>
+    </div>
+    <script language="JavaScript">
+
+
+//        $('#tt3').treegrid({
+//            url:'/organizationWeb/getJson',
+//            idField:'id',
+//            treeField:'name',
+//            columns:[[
+//                {title:'',field:'id',width:180},
+//                {title:'机构名称',field:'name',width:180},
+//                {title:'机构类型',field:'type',width:180},
+//                {title:'机构编码',field:'code',width:180},
+//                {title:'负责人',field:'principalId',width:180},
+//                {title:'业务覆盖区域',field:'path',width:180},
+//                {title:'地址',field:'address',width:180},
+//                {title:'电话号码',field:'phone',width:180},
+//                {title:'邮政编码',field:'postCode',width:180},
+//                {title:'传真号',field:'fax',width:180},
+//                {title:'创建时间',field:'createTime',width:180},
+//                {title:'修改时间',field:'field',width:180}
+//            ]]
+//        });
+
+
+
+        var data1;
+
+        $(function () {
+        });
+
+        function addOrganization() {
+            $.getJSON("/organizationWeb/getJson",function (data) {
+                data1 = data;
+                var optionPrincipalIds = "";
+                var optionTypes = "";
+                var optionNames = "";
+                $(data).each(function (i,organization){
+                    var optionType = "<option id="+organization.id+">"+organization.type+"</option>";
+
+                    var optionName = "<option id="+organization.id+">"+organization.name+"</option>";
+
+                    var optionPrincipalId = "<option id="+organization.id+">"+organization.principalId+"</option>";
+                    optionNames = optionNames + optionName;
+                    optionTypes= optionTypes+optionType;
+                    optionPrincipalIds = optionPrincipalIds+optionPrincipalId;
+                });
+
+                $("#select1").append(optionNames);
+                $("#select2").append(optionTypes);
+                $("#select3").append(optionPrincipalIds);
+            })
+            $("#dlg").dialog("open");
+        }
+
+        function saveOrganization() {
+            var sysOrganization = {};
+
+            var _parentId = $("option:selected").eq(0).attr("id");
+            sysOrganization["_parentId"]=_parentId;
+
+            var type = $("option:selected").eq(1).val();
+            sysOrganization["type"]=type;
+
+            var principalId = $("option:selected").eq(2).val();
+            sysOrganization["principalId"]=principalId;
+
+            var name = $("#name").val();
+            sysOrganization["name"]=name;
+
+            var address = $("#address").val();
+            sysOrganization["address"]=address;
+
+            var phone = $("#phone").val();
+            sysOrganization["phone"]=phone;
+
+            var postCode = $("#postCode").val();
+            sysOrganization["postCode"]=postCode;
+
+            var fax = $("#fax").val();
+            sysOrganization["fax"]=fax;
+
+            var orderNo = $("#orderNo").val();
+            sysOrganization["orderNo"]=orderNo;
+
+            alert("????");
+            $.getJson("/organizationWeb/saveOrganization",sysOrganization,function(status) {
+                if (status) {
+                    alert(status);
+                }else {
+                    alert("还真没成功");
+                }
+                alert("回调函数没有执行");
+
+            })
+            close();
+        };
+
+        function close() {
+            $("#dlg").dialog("close");
+        }
+    </script>
+</body>
+</html>

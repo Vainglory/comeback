@@ -1,0 +1,10 @@
+server:
+  port: 8061
+eureka:
+  instance:
+    hostname: comeback8061.com
+  client:
+    register-with-eureka: false
+    fetch-registry: false
+    service-url:
+      defaultZone: http://eureka8061.com:8061/eureka

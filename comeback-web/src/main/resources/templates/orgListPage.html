@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--【组织机构管理】面板-->
+
+
+<table id="Orgdg" class="easyui-treegrid" title="" style="height:100%"
+       data-options="rownumbers:true,toolbar:'#Orgtb',singleSelect:true,collapsible:true">
+</table>
+
+<div id="Orgtb" style="padding:5px;height:auto">
+    <div style="margin-bottom:5px">
+        <a href="javascript:addOrgInfo()" class="easyui-linkbutton" iconCls="icon-add" plain="true">添加</a>
+        <a href="javascript:editOrgrInfo()" class="easyui-linkbutton" iconCls="icon-edit" plain="true">编辑</a>
+        <a href="javascript:deleteOrgInfo()" class="easyui-linkbutton" iconCls="icon-remove" plain="true">删除</a>
+    </div>
+
+</div>
+
+<!--新增属性的对话框-->
+<div id="Orgdlg" class="easyui-dialog" title="机构编辑" style="width:600px;height:500px;padding:10px"
+     closed="true" data-options="iconCls:'icon-save',resizable:true,modal:true" buttons="#bb">
+    <form id="attrForm">
+        <br/>
+        上级机构:<input id="parent" class="easyui-combobox" data-options="" style="width:200px"/></select>
+        <!--<select id="ctg1ForAttrList" class="easyui-combobox" style="width:150px;">-->
+        <br/><br/>
+        <label>机构类型:</label>
+        <input id="type" name="type" class="easyui-combobox" data-options="" style="width:200px"/>
+
+        <br/><br/>
+        <label>负&nbsp;责&nbsp;人&nbsp;: </label>
+        <input id="principal" name="principal" class="easyui-combobox" data-options="" style="width:200px"/>
+
+
+        <br/><br/>
+        <label>机构名称:</label>
+        <input id="name" name="name" class="easyui-textbox" data-options="" style="width:200px"/>
+
+
+        <br/><br/>
+        <label>地&nbsp;&nbsp;&nbsp;&nbsp;址&nbsp;:&nbsp;</label>
+        <input id="address" name="address" class="easyui-textbox" data-options="" style="width:200px"/>
+
+
+        <br/><br/>
+        <label>电话号码:</label>
+        <input id="phone" name="phone" class="easyui-textbox" data-options="" style="width:200px"/>
+
+        <br/><br/>
+        <label>邮政编码:</label>
+        <input id="postCode" name="postCode" class="easyui-textbox" data-options="" style="width:200px"/>
+
+        <br/><br/>
+        <label>传&nbsp;真&nbsp;号&nbsp;: </label>
+        <input id="fax" name="fax" class="easyui-textbox" data-options="" style="width:200px"/>
+
+        <br/><br/>
+        <label>排&nbsp;&nbsp;&nbsp;&nbsp;序&nbsp;:&nbsp;</label>
+        <input id="orderNo" name="orderNo" class="easyui-textbox" data-options="" style="width:200px"/>
+
+        <input id="oId" name="id" type="hidden"/>
+    </form>
+</div>
+
+<div id="bb">
+    <a href="#" id="save_org_btn" class="easyui-linkbutton">保存</a>
+    <a href="#" id="close_org_btn" class="easyui-linkbutton">关闭</a>
+</div>
+<script language="JavaScript">
+
+
+    initOrgListDatagrid(); //打开组织机构面板时调用，显示组织机构信息
+
+
+
+    //=======================编辑组织机构==========
+    function editOrgrInfo(){
+        //获取选中项
+        var rowSelect =  $("#Orgdg").treegrid("getSelected");
+        if (rowSelect == null) {
+            $.messager.alert('提示', '请先选择需要编辑的组织机构.', 'warning');
+        } else {
+
+            //编写datagrid的初始化方法,初始化按钮和列头
+            initAttrValueDatagrid();
+
+            //根据选择向id，向后台发起请求，获取数据
+
+            var orgId =  rowSelect.id;
+            var orgName =  rowSelect.name;
+
+            $('#Orgdlg').dialog('open');
+
+            $.get(
+                "getOrgById",
+                {"orgId":orgId},
+                function(result){
+                    //console.log(result.data);
+                   //alert(org.address);
+
+                    $("#oId").val(result.data.id);
+
+                    $('#parent').combobox('setValue',result.data.parentId);
+                    //$('#type').combobox('select',org.type);
+                    //$('#principal').combobox('select',org.principal);
+
+                    $("#name").textbox("setText",result.data.name);
+                    $("#address").textbox("setText",result.data.address);
+                    $("#phone").textbox("setText",result.data.phone);
+                    $("#postCode").textbox("setText",result.data.postCode);
+                    $("#fax").textbox("setText",result.data.fax);
+
+                });
+
+        }
+    }
+
+
+
+    //=======================删除组织机构==========
+    function deleteOrgInfo(){
+
+        //获取选中项
+        var rowSelect =  $("#Orgdg").treegrid("getSelected");
+
+        if (rowSelect == null) {
+            $.messager.alert('信息', '请先选择需要删除的组织机构.', 'warning');
+        } else {
+            var orgId =  rowSelect.id;
+            var orgName =  rowSelect.name;
+
+            $.extend($.messager.defaults, {
+                ok: "确定",
+                cancel: "取消"
+            });
+
+            $.messager.confirm('确认提示', '您确定要删除【' + orgName + '】机构吗?删除后其子机构将被一起删除', function (result) {
+                //点击确定，result=true
+                //点击取消，result=false
+
+                /*
+                 0、获取需要删除的组织机构
+                 *1、获取需要删除的组织机构的id,发送ajax请求
+                 * 2、根据属性id，在表中，删除parentId 为 id的记录
+                 * 3、根据属性id，在表中，删除对应的记录
+                 *
+                 * */
+                if (result) {
+                    $.post(
+                        "deleteOrg",
+                        {'orgId': orgId, '_method': 'delete'},
+                        function (result) {
+                            //说明成功了
+                            if (result.code == 0) {
+                                //成功后给出提示
+                                $.messager.show({
+                                    title: '提示',
+                                    msg: result.msg,
+                                    timeout: 1000,
+                                    showType: 'fade',
+                                    style: {
+                                        right: '',
+                                        bottom: ''
+                                    }
+                                });
+                            }
+                            //删除成功，刷新组织机构列表
+                            initOrgListDatagrid();
+                        }
+                    );
+
+                }
+            });
+
+
+        }
+
+    }
+
+    // ===================打开添加对话框======================
+    function addOrgInfo(){
+
+        //清除文本框中内容
+
+        $("#id").val("");
+
+        $("#name").textbox('clear');
+        $("#address").textbox('clear');
+        $("#phone").textbox('clear');
+        $("#postCode").textbox('clear');
+        $("#fax").textbox('clear');
+
+
+        /*需要清空上级机构*/
+        $("#parent").combobox("clear");
+
+        $('#Orgdlg').dialog('open');
+
+        //获取选中项的id
+        var rowSelect =  $("#Orgdg").treegrid("getSelected");
+        var orgId;
+        if(rowSelect != null){
+            orgId =  rowSelect.id;
+        }
+
+        //编写datagrid的初始化方法,初始化按钮和列头
+        initAttrValueDatagrid(orgId);
+
+    }
+    //初始化方法，可以用来加载 选择框中的数据
+    function initAttrValueDatagrid(orgId){
+
+        //加载所有的【上级机构】
+        //使用Javascript创建下拉列表框
+        $("#parent").combobox({
+            //url:"getAllParent",
+            url:"getList",
+            valueField:"id",
+            textField:"name"
+        });
+
+        if(orgId !=""){
+            $('#parent').combobox('setValue',orgId);
+        }
+
+
+    }
+
+    //初始化方法，打开组织机构面板时调用
+    function initOrgListDatagrid() {
+
+       $("#Orgdg").treegrid({
+           url: 'getAll',
+           idField:"id",
+           treeField:"name",
+           columns:[[
+              // {title:'ID',field:'id',width:100},
+               {title:'机构名称',field:'name',width:200},
+               {field:'type',title:'机构类型',width:100},
+               //{field:'version',title:'版本',width:100},
+               //{field:'status',title:'系统状态',width:100},
+               //{field:'path',title:'机构路径',width:100},
+               {field:'principalId',title:'负责人',width:100},
+               {field:'address',title:'地址',width:100},
+               {field:'phone',title:'电话号码',width:100},
+               {field:'postCode',title:'邮政编码',width:100},
+               {field:'fax',title:'传真号',width:100},
+               {field:'createTime',title:'创建时间',width:200,formatter:function(val,rec){
+                   return jsonTimeStamp(val);
+               }}
+           ]]
+
+       });
+        
+    }
+
+    //jQuery EasyUI时间戳自定义时间显示格式类型方法
+    function jsonTimeStamp(milliseconds) {
+        if (milliseconds != "" && milliseconds != null
+            && milliseconds != "null") {
+            var datetime = new Date();
+            datetime.setTime(milliseconds);
+            var year = datetime.getFullYear();
+            var month = datetime.getMonth() + 1 < 10 ? "0"
+                + (datetime.getMonth() + 1) : datetime.getMonth() + 1;
+            var date = datetime.getDate() < 10 ? "0" + datetime.getDate()
+                : datetime.getDate();
+            var hour = datetime.getHours() < 10 ? "0" + datetime.getHours()
+                : datetime.getHours();
+            var minute = datetime.getMinutes() < 10 ? "0"
+                + datetime.getMinutes() : datetime.getMinutes();
+            var second = datetime.getSeconds() < 10 ? "0"
+                + datetime.getSeconds() : datetime.getSeconds();
+            return year + "-" + month + "-" + date + " " + hour + ":" + minute
+                + ":" + second;
+        } else {
+            return "";
+        }
+
+    }
+
+
+    //===============关闭按钮方法========
+    function close(){
+
+        $('#Orgdlg').dialog('close');
+
+    }
+    //==============保存按钮方法=========
+    function saveOrg(){
+
+        var orgJson={};
+
+        //获取用输入的内容，然后发送ajax请求
+        var orgId = $("#oId").val();
+        var orgName = $("#name").val();
+        var orgAddress = $("#address").val();
+        var orgPhone = $("#phone").val();
+        var orgPostCode = $("#postCode").val();
+        var orgFax = $("#fax").val();
+
+        var orgParent = $("#parent").val(); //获得选中的 上级机构的id
+
+        //alert(orgId);
+
+        //封装请求参数
+        orgJson["id"] = orgId;
+        orgJson["name"] = orgName;
+        orgJson["address"] = orgAddress;
+        orgJson["phone"] = orgPhone;
+        orgJson["postCode"] = orgPostCode;
+        orgJson["fax"] = orgFax;
+        orgJson["parentId"] = orgParent;
+        //alert(orgParent);
+        //console.log(orgJson);
+
+        //判断是否 已选择上一级机构
+        //如果没有，说明添加的是跟目录，上级目录不需要选择，机构名称为公司名称
+
+        //发送ajax请求
+     $.post(
+            "saveOrg",
+            orgJson,
+            //{"id":orgId,"name":orgName,"address":orgAddress,"phone":orgPhone,"postCode":orgPostCode,"fax":orgFax,"parentId":orgParent},
+            function(result){
+                //成功后给出提示
+                $.messager.show({
+                    title: '提示',
+                    msg: result.msg,
+                    timeout: 1000,
+                    showType: 'fade',
+                    style: {
+                        right: '',
+                        bottom: ''
+                    }
+                });
+
+                //保存完成之后，关闭对话框
+                $('#Orgdlg').dialog('close');
+
+                // 刷新组织机构列表
+                initOrgListDatagrid();
+
+            });
+
+    }
+
+
+    //=========================点击保存按钮==================
+    //界面加载完成之后
+    $(function(){
+
+        //关闭按钮
+        $("#close_org_btn").click(function () {
+
+            close();
+
+        });
+
+
+        //给保存按钮，绑定单击事件
+        $("#save_org_btn").click(function(){
+
+            saveOrg();  //调用保存方法
+        });
+
+    });
+
+
+
+</script>
+
+
+
+</body>
+</html>

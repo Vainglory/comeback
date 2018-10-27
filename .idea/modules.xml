@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/comeback.iml" filepath="$PROJECT_DIR$/comeback.iml" />
+      <module fileurl="file://$PROJECT_DIR$/comeback-api/comeback-api.iml" filepath="$PROJECT_DIR$/comeback-api/comeback-api.iml" />
+      <module fileurl="file://$PROJECT_DIR$/comeback-dao/comeback-dao.iml" filepath="$PROJECT_DIR$/comeback-dao/comeback-dao.iml" />
+      <module fileurl="file://$PROJECT_DIR$/comeback-eureka/comeback-eureka.iml" filepath="$PROJECT_DIR$/comeback-eureka/comeback-eureka.iml" />
+      <module fileurl="file://$PROJECT_DIR$/comeback-parent/comeback-parent.iml" filepath="$PROJECT_DIR$/comeback-parent/comeback-parent.iml" />
+      <module fileurl="file://$PROJECT_DIR$/comeback-service/comeback-service.iml" filepath="$PROJECT_DIR$/comeback-service/comeback-service.iml" />
+      <module fileurl="file://$PROJECT_DIR$/comeback-web/comeback-web.iml" filepath="$PROJECT_DIR$/comeback-web/comeback-web.iml" />
+    </modules>
+  </component>
+</project>
