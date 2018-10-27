@@ -17,14 +17,14 @@ public class SysOrganizationController {
     SysOrganizationService service;
 
 
-    @RequestMapping(value = "getAll",method = RequestMethod.GET)
+    @RequestMapping(value = "getAll", method = RequestMethod.GET)
     public List<SysOrganization> getAll() {
         List<SysOrganization> organizations = service.getOrganizations();
         return organizations;
     }
 
 
-    @RequestMapping(value = "save",method=RequestMethod.POST)
+    @RequestMapping(value = "save", method = RequestMethod.POST)
     public String save(SysOrganization sysOrganization) {
         String status = "保存成功";
         try {
@@ -34,5 +34,11 @@ public class SysOrganizationController {
             e.printStackTrace();
         }
         return status;
+    }
+
+    @RequestMapping("value")
+    public void cheer() {
+        System.out.println("我。。"); System.out.println("我。。"); System.out.println("我。。");
+        System.out.println("我。。");
     }
 }
