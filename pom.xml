@@ -11,8 +11,9 @@
     <modules>
         <module>comeback-parent</module>
         <module>comeback-api</module>
-        <module>comeback-dao</module>
-    </modules>
+		<!-- <module>comeback-dao</module>-->
 
+    </modules>
+	
 
 </project>
