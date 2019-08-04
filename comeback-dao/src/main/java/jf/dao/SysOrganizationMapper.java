@@ -27,6 +27,6 @@ public interface SysOrganizationMapper {
     int updateByExample(@Param("record") SysOrganization record, @Param("example") SysOrganizationExample example);
 
     int updateByPrimaryKeySelective(SysOrganization record);
-
+	int test();
     int updateByPrimaryKey(SysOrganization record);
 }
